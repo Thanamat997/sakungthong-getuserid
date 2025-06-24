@@ -2,29 +2,38 @@
 <html lang="th">
 <head>
   <meta charset="UTF-8">
-  <title>ดึง LINE User ID</title>
+  <title>กำลังตรวจสอบผู้ใช้...</title>
+  <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
+  <style>
+    body {
+      font-family: 'Sarabun', sans-serif;
+      text-align: center;
+      margin-top: 20%;
+      font-size: 1.2em;
+    }
+  </style>
 </head>
 <body>
-  <h2>กำลังตรวจสอบข้อมูลผู้ใช้งาน...</h2>
+  <p>กำลังตรวจสอบข้อมูลผู้ใช้งาน LINE...</p>
 
-  <!-- โหลด SDK ก่อน -->
-  <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
   <script>
-    const redirectUrl = new URLSearchParams(window.location.search).get('redirect') || '/';
-    liff.init({ liffId: "2007625708-loPNM698" }).then(() => {
-      if (!liff.isLoggedIn()) {
-        liff.login({ redirectUri: location.href });
-      } else {
-        liff.getProfile().then(profile => {
-          const userId = liff.getContext().userId;
-          const userName = encodeURIComponent(profile.displayName);
-          const finalRedirect = `${redirectUrl}?userId=${userId}&userName=${userName}`;
-          location.href = finalRedirect;
-        });
-      }
-    }).catch(err => {
-      document.body.innerHTML = "<p>เกิดข้อผิดพลาดในการโหลด LIFF</p><pre>" + err + "</pre>";
-    });
+    const redirectUrl = "https://thanamat997.github.io/sakungthong-repair/"; // เปลี่ยนปลายทางตรงนี้ได้
+
+    liff.init({ liffId: "2007625708-loPNM698" })
+      .then(() => {
+        if (!liff.isLoggedIn()) {
+          liff.login({ redirectUri: location.href });
+        } else {
+          liff.getProfile().then(profile => {
+            const userId = liff.getContext().userId || profile.userId || "unknown";
+            const userName = encodeURIComponent(profile.displayName || "unknown");
+            window.location.href = `${redirectUrl}?userId=${userId}&userName=${userName}`;
+          });
+        }
+      })
+      .catch(err => {
+        document.body.innerHTML = `<p>เกิดข้อผิดพลาดในการโหลด LIFF</p><pre>${err}</pre>`;
+      });
   </script>
 </body>
 </html>
